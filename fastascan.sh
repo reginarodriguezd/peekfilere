@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#Script for finding all fasta and fa files
 #Establish the command line arguments
 if [ $@ -ge 1 ]; then
 	SEARCH_FILES="1"
@@ -23,3 +23,12 @@ else
 	echo "Aminoacid"
 fi
 }
+#Find all the fasta/fa files
+FILES=$(find "SEARCH_FILES" -type f -o -type l -name "*.fa" -o name 
+"*.fasta")
+FILE_COUNT=$(echo "$FILES" | grep -c "^")
+#Count total unique FASTA IDs across all files
+TOTAL_IDS=$(grep "^>" $FILES | cut -d ' ' -f1 | sort -u | wc -l)
+
+echo "=== FASTA Files Report ==="
+echo "Total FASTA files
