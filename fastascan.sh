@@ -8,8 +8,7 @@ if [ $@ -ge 2 ]; then
         NUMBER_LINES="2"
 fi
 
-#Check that it functions this script to determine if the file contains 
-nucleotides or aminoacids
+#Check that it functions this script to determine if the file contains nucleotides or aminoacids
 file="1"
 seq=$grep -v "^>" "$file" | tr -d '\n' | tr -d '-' | tr -d ' ')
 total_chars=${#seq}
