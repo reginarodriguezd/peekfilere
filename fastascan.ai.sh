@@ -14,7 +14,7 @@ determine_sequence_type() {
 	if [ $nucleotide_count -ge $((total_length * 9 / 10)) ]; then
 		echo "Nucleotide"
 	else
-		echo "Amino acid"
+		echo "Amino Acid"
 	fi
 }
 
@@ -32,33 +32,41 @@ echo "Total FASTA files: $FILE_COUNT"
 echo "Total unique FASTA IDs: $TOTAL_IDS"
 echo "========================="
 
+#Determine if the filw is a symbolic link or regular file
 while IFS= read -r file; do
     [ -z "$file" ] && continue
     echo -e "\n### File: $file"
     echo "Type: $([ -L "$file" ] && echo "Symbolic Link -> $(readlink
 "$file")" || echo "Regular File")"
 
-
+#Determine de number of sequences, total sequence length and sequence type
     SEQ_COUNT=$(grep -c "^>" "$file")
     echo "Number of sequences: $SEQ_COUNT"
-    echo "Total sequence length: $(grep -v "^>" "$file" | tr -d '\n- ' |
+    echo "Total sequence length: $(grep -v "^>" "$file" | tr -d '\n- ' | 
 wc -c)"
     echo "Sequence type: $(determine_sequence_type "$file")"
-	
+
 # Display file content based on NUM_LINES
-    if [ "$NUM_LINES" -gt 0 ]; then
-        TOTAL_LINES=$(wc -l < "$file")
-        if [ "$TOTAL_LINES" -le $((2*NUM_LINES)) ]; then
-            echo "File Content:"
-            cat "$file"
-        else
-            echo "File Content (This is the first and the last $NUM_LINES lines):"
-            head -n $NUM_LINES "$file"
-            echo "..."
-            tail -n $NUM_LINES "$file"
-        fi
+    FILE=$file
+    if [[ -n $NUM_LINES ]]; then
+        LINES=$NUM_LINES
+    else
+        LINES=3
     fi
 
+#CHATBOT doesnt suggest it, but I used the peek.sh file to put the instructions of puting the first and 
+last lines of the file 
+ TOTLINES=$(wc -l < "$FILE")
+
+ if ((TOTLINES <= 2 * LINES)); then 
+        echo "File Content:"
+        cat "$FILE"
+ else
+        echo "File Content (This is the first and the last ${LINES} lines."
+        head -n "$LINES" "$FILE"
+        echo "..."
+        tail -n "$LINES" "$FILE"
+fi
 
 #Establish a separator to distinguish output for the different files
 echo "------------------------"
